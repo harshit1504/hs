@@ -92,14 +92,14 @@ def makeWebhookResult(data):
     if (location is None) or (item is None) or (units is None):
         return {}
 
-    atmosphere = channel.get('atmosphere')
-    if atmosphere is None:
+    condition = item.get('condition')
+    if condition is None:
         return {}
 
     # print(json.dumps(item, indent=4))
 
-    speech = "Today in " + location.get('city') + ": " + "humudity is" atmosphere.get('humidity') + 
-             "and the" ", the visibility is " + atmosphere.get('visibility') + " " + units.get('distance')
+    speech = "Today in " + location.get('city') + ": " + condition.get('date') + \
+             ", the temperature is " + condition.get('code') + " " + units.get('temperature')
 
     print("Response:")
     print(speech)
