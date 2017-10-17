@@ -72,8 +72,8 @@ def processRequest_1(req):
     yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
     result = urlopen(yql_url).read()
     data = json.loads(result)
-    res1 = makeWebhookResult1(data)
-    return res1
+    res = makeWebhookResult1(data)
+    return res
 
 
 
@@ -106,14 +106,14 @@ def makeWebhookResult(data):
     if (location is None) or (item is None) or (units is None):
         return {}
 
-    atmosphere = channel.get('atmosphere')
-    if atmosphere is None:
+    condition = item.get('condition')
+    if condition is None:
         return {}
 
     # print(json.dumps(item, indent=4))
 
-    speech = "Today in " + location.get('city') + ": " + "humidity is" + atmosphere.get('humidity') + \
-             ", the visibility is " + atmosphere.get('visibility') + " " + units.get('distance')
+    speech = "Today in " + location.get('city') + ": " + condition.get('text') + \
+             ", the temperature is " + condition.get('temp') + " " + units.get('temperature')
 
     print("Response:")
     print(speech)
