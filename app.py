@@ -49,7 +49,7 @@ def webhook():
     return r
 
 
-def processRequest(req):
+'''def processRequest(req):
     if req.get("result").get("action") != "yahooWeather":
         return {}
     baseurl = "https://query.yahooapis.com/v1/public/yql?"
@@ -61,7 +61,7 @@ def processRequest(req):
     data = json.loads(result)
     res = makeWebhookResult(data)
     return res
-
+'''
 def processRequest_1(req):
     if req.get("result").get("action") != "sunset":
         return {}
@@ -86,7 +86,7 @@ def makeYqlQuery(req):
 
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
-
+'''
 def makeWebhookResult(data):
     query = data.get('query')
     if query is None:
@@ -124,7 +124,7 @@ def makeWebhookResult(data):
         # "data": data,
         # "contextOut": [],
         "source": "apiai-weather-webhook-sample"
-    }
+    }'''
 def makeWebhookResult1(data):
     query = data.get('query')
     if query is None:
