@@ -57,9 +57,9 @@ def processRequest(req):
     yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
     result = urlopen(yql_url).read()
     data = json.loads(result)
-    if req.get("result").get("action") == "yahooWeatherForecast":
-        res = makeWebhookResult(data)
-        return res
+   # if req.get("result").get("action") == "yahooWeatherForecast":
+    #    res = makeWebhookResult(data)
+     #   return res
     if req.get("result").get("action") == "sunset":
         res1 = makeWebhookResult1(data)
         return res1
