@@ -57,9 +57,9 @@ def processRequest(req):
     yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
     result = urlopen(yql_url).read()
     data = json.loads(result)
-   # if req.get("result").get("action") == "yahooWeatherForecast":
-    #    res = makeWebhookResult(data)
-     #   return res
+    if req.get("result").get("action") == "yahooWeatherForecast":
+        res = makeWebhookResult(data)
+        return res
     if req.get("result").get("action") == "sunset":
         res1 = makeWebhookResult1(data)
         return res1
@@ -139,7 +139,7 @@ def makeWebhookResult1(data):
 
     # print(json.dumps(item, indent=4))
 
-    speech = "Today in " + location.get('city') + "sun will set at " + astronomy.get('sunset') 
+    speech = "Today in " + location.get('city') + " Sun will set at " + astronomy.get('sunset') 
 
     print("Response:")
     print(speech)
