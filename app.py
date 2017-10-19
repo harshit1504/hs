@@ -58,11 +58,11 @@ def processRequest(req):
         number2=req.get("result").get("parameters").get("unit-weight").get("amount")
         res=weight(number2)
         return res
-    if req.get("result").get("action") == "3months":
+   """ if req.get("result").get("action") == "3months":
         b1=req.get("result").get("parameters").get("bool")
         boo=str(b1)
         res=months(boo)
-        return res
+        return res"""
     
 
     
@@ -100,7 +100,7 @@ def weight(number):
         "source": "apiai-weather-webhook-sample"
     }   
     
-def months(a): 
+"""def months(a): 
     if a =="yes":
         speech = "Sorry you can't donate blood"
     if a =="no":
@@ -112,7 +112,7 @@ def months(a):
         # "contextOut": [],
         "source": "apiai-weather-webhook-sample"
     }  
-
+"""
     
 
     
