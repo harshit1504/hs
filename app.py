@@ -67,6 +67,15 @@ def processRequest(req):
     
         res = makeWebhookResult(data,data_1)
         return res
+    if req.get("result").get("action") == "age": 
+        number1 = req.get("result").get("parameters").get("number")
+        res = age(number1)
+        return res
+    if req.get("result").get("action") == "weight": 
+        number2 = req.get("result").get("parameters").get("unit-weight").get("amount")
+        res = weight(number2)
+        return res
+        
 
 
 def makeYqlQuery(req):
@@ -159,7 +168,39 @@ def makeWebhookResult(data,data_1):
         "source": "https://github.com/ranjan1110/google-map"
     }
 
+def age(num):
+    if num<18 or num >60:
+        speech = "You dont fall into required age criteria to donate the blood."
+    else :
+        speech = "What is Your Weight?"
+        
+    print("Response:")
+    print(speech)
 
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "https://github.com/ranjan1110/google-map"
+    }
+
+def weight(num):
+    if num<50 :
+        speech = "You are Underweight to donate blood."
+    else :
+        speech = "Have You Donated blood in past three Months?"
+        
+    print("Response:")
+    print(speech)
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "https://github.com/ranjan1110/google-map"
+    }
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
 
