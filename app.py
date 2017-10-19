@@ -1,19 +1,3 @@
-# -*- coding:utf8 -*-
-# !/usr/bin/env python
-# Copyright 2017 Google Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
@@ -22,12 +6,32 @@ from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
+import sys
+import tweepy
+import requests
+import numpy as np
+
+from keras.models import Sequential
+from keras.layers import Dense
+from textblob import TextBlob
+
 import json
 import os
 
 from flask import Flask
 from flask import request
 from flask import make_response
+
+consumer_key = ''
+consumer_secret = ''
+access_token = ''
+access_token_secret = ''
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+user = tweepy.API(auth)
+
+# Where the csv file will live
+FILE_NAME = 'historical.csv'
 
 # Flask app should start in global layout
 app = Flask(__name__)
@@ -50,108 +54,76 @@ def webhook():
 
 
 def processRequest(req):
-    baseurl = "https://query.yahooapis.com/v1/public/yql?"
-    yql_query = makeYqlQuery(req)
-    if yql_query is None:
-         return {}
-    yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
-    result = urlopen(yql_url).read()
-    data = json.loads(result)
-    if req.get("result").get("action") == "yahooWeatherForecast":
-        res = makeWebhookResult(data)
-        return res
-    if req.get("result").get("action") == "sunset":
-        res1 = makeWebhookResult1(data)
-        return res1
-
-
-def makeYqlQuery(req):
-    result = req.get("result")
-    parameters = result.get("parameters")
-    city = parameters.get("geo-city")
-    if city is None:
-        return None
-
-    return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
-
-
-def makeWebhookResult(data):
-    query = data.get('query')
-    if query is None:
-        return {}
-
-    result = query.get('results')
-    if result is None:
-        return {}
-
-    channel = result.get('channel')
-    if channel is None:
-        return {}
-
-    item = channel.get('item')
-    location = channel.get('location')
-    units = channel.get('units')
-    if (location is None) or (item is None) or (units is None):
-        return {}
-
-    condition = item.get('condition')
-    if condition is None:
-        return {}
-
-    # print(json.dumps(item, indent=4))
-
-    speech = "Today in " + location.get('city') + ": " + condition.get('text') + \
-             ", the temperature is " + condition.get('temp') + " " + units.get('temperature')
-
+     result = req.get("result")
+     parameters = result.get("parameters")
+     quote=parameters.get("company").upper()
+     if not get_historical(quote):
+         return{}
+    
+    res=stock_prediction()
     print("Response:")
-    print(speech)
-
+    print(res)
     return {
-        "speech": speech,
-        "displayText": speech,
+        "speech": res,
+        "displayText": res,
         # "data": data,
         # "contextOut": [],
         "source": "apiai-weather-webhook-sample"
     }
+    
 
-def makeWebhookResult1(data):
-    query = data.get('query')
-    if query is None:
-        return {}
+    
+def get_historical(quote):
+    # Download our file from google finance
+    url = 'http://www.google.com/finance/historical?q=NASDAQ%3A'+quote+'&output=csv'
+    r = requests.get(url, stream=True)
 
-    result = query.get('results')
-    if result is None:
-        return {}
+    if r.status_code != 400:
+        with open(FILE_NAME, 'wb') as f:
+            for chunk in r:
+                f.write(chunk)
 
-    channel = result.get('channel')
-    if channel is None:
-        return {}
+        return True
+        
+ 
+        
+def stock_prediction():
 
-    item = channel.get('item')
-    location = channel.get('location')
-    units = channel.get('units')
-    if (location is None) or (item is None) or (units is None):
-        return {}
+    # Collect data points from csv
+    dataset = []
 
-    astronomy = channel.get('astronomy')
-    if astronomy is None:
-        return {}
+    with open(FILE_NAME) as f:
+        for n, line in enumerate(f):
+            if n != 0:
+                dataset.append(float(line.split(',')[1]))
 
-    # print(json.dumps(item, indent=4))
+    dataset = np.array(dataset)
 
-    speech = "Today in " + location.get('city') + " Sun will set at " + astronomy.get('sunset') 
+    # Create dataset matrix (X=t and Y=t+1)
+    def create_dataset(dataset):
+        dataX = [dataset[n+1] for n in range(len(dataset)-2)]
+        return np.array(dataX), dataset[2:]
+        
+    trainX, trainY = create_dataset(dataset)
 
-    print("Response:")
-    print(speech)
+    # Create and fit Multilinear Perceptron model
+    model = Sequential()
+    model.add(Dense(8, input_dim=1, activation='relu'))
+    model.add(Dense(1))
+    model.compile(loss='mean_squared_error', optimizer='adam')
+    model.fit(trainX, trainY, nb_epoch=200, batch_size=2, verbose=2)
 
-    return {
-        "speech": speech,
-        "displayText": speech,
-        # "data": data,
-        # "contextOut": [],
-        "source": "apiai-weather-webhook-sample"
-    }
+    # Our prediction for tomorrow
+    prediction = model.predict(np.array([dataset[0]]))
+    result = 'The price will move from %s to %s' % (dataset[0], prediction[0][0])
 
+    return result
+    
+
+    
+    
+    
+    
 
 
 if __name__ == '__main__':
@@ -160,3 +132,5 @@ if __name__ == '__main__':
     print("Starting app on port %d" % port)
 
     app.run(debug=False, port=port, host='0.0.0.0')
+    
+os.remove(FILE_NAME)    
