@@ -75,6 +75,10 @@ def processRequest(req):
         number2 = req.get("result").get("parameters").get("unit-weight").get("amount")
         res = weight(number2)
         return res
+    if req.get("result").get("action") == "months": 
+        a = req.get("result").get("parameters").get("boo")
+        res = months(a)
+        return res
         
 
 
@@ -190,6 +194,23 @@ def weight(num):
         speech = "You are Underweight to donate blood."
     else :
         speech = "Have You Donated blood in past three Months?"
+        
+    print("Response:")
+    print(speech)
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "https://github.com/ranjan1110/google-map"
+    }
+
+def months(a):
+    if a>0 :
+        speech = "You Can't donate blood."
+    else :
+        speech = "You Can Only Donate if"
         
     print("Response:")
     print(speech)
