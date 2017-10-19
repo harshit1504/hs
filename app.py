@@ -160,7 +160,7 @@ def makeWebhookResult(data,data_1):
 
     # print(json.dumps(item, indent=4))
 
-    speech = name + " \n Address is:  " + formatted_address_1 +"\n Phone number: "+phone
+    speech = name + " \n Address is:  " + formatted_address_1 +"\n \n Phone number: "+phone
 
     print("Response:")
     print(speech)
@@ -211,7 +211,7 @@ def months(a):
     if a=="yes" :
         speech = "Sorry! You Can't donate blood. See you next time."
     if a=="no" :
-        speech = "A person can only donate if:" + "\n \n Never has been tested HIV positive." + "\n \n Not suffering from ailments like cardiac arrest, hypertension, blood pressure, cancer, epilepsy, kidney ailments and diabetes." + " \n \n Hasn't undergone ear body piercing or tattoo in the past 6 months." + " \n \n Haven't undergone immunization in the past 1 month." + " \n \n Not treated for rabies or received Hepatitis B vaccine in the past 6 months." + " \n \n Hasn't consumed alcohol in the past 24 hours." + " \n \n Haven't had fits, tuberculosis, asthma and allergic disorders in the past." + " \n \n Haven't undergone major dental procedures or general surgeries in the past 1 month." + "  \n \n In case of female donors :" + "\n \n \t Haven't had miscarriage in the past 6 months."  + "\n \n \t Not pregnant or breastfeeding." + "  \n \n Do you pass these conditions?"
+        speech = "A person can only donate if:" + "\n \n 1) Never has been tested HIV positive." + "\n \n 2) Not suffering from ailments like cardiac arrest, hypertension, blood pressure, cancer, epilepsy, kidney ailments and diabetes." + " \n \n 3) Hasn't undergone ear body piercing or tattoo in the past 6 months." + " \n \n 4) Haven't undergone immunization in the past 1 month." + " \n \n 5) Not treated for rabies or received Hepatitis B vaccine in the past 6 months." + " \n \n 6) Hasn't consumed alcohol in the past 24 hours." + " \n \n 8) Haven't had fits, tuberculosis, asthma and allergic disorders in the past." + " \n \n 9) Haven't undergone major dental procedures or general surgeries in the past 1 month." + "  \n \n 10)In case of female donors :" + "\n \n \t (i) Haven't had miscarriage in the past 6 months."  + "\n \n \t (ii) Not pregnant or breastfeeding." + "  \n \n Do you pass these conditions?"
         
     print("Response:")
     print(speech)
