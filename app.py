@@ -59,7 +59,8 @@ def processRequest(req):
         res=weight(number2)
         return res
     if req.get("result").get("action") == "3months":
-        boo=req.get("result").get("parameters").get("bool")
+        b1=req.get("result").get("parameters").get("bool")
+        boo=str(b1)
         res=months(boo)
         return res
     
