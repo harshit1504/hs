@@ -50,32 +50,106 @@ def webhook():
 
 
 def processRequest(req):
-    if req.get("result").get("action") == "age":
-        number1=req.get("result").get("parameters").get("number")
-        res=age(number1)
-        return res
-    if req.get("result").get("action") == "weight":
-        number2=req.get("result").get("parameters").get("unit-weight").get("amount")
-        res=weight(number2)
-        return res
-   """ if req.get("result").get("action") == "3months":
-        b1=req.get("result").get("parameters").get("bool")
-        boo=str(b1)
-        res=months(boo)
-        return res"""
+    if req.get("result").get("action") != "map":
+        return {}
+    #baseurl = "https://maps.googleapis.com/maps/api/place/textsearch/json"
+    yql_url = makeYqlQuery(req)
+    if yql_url is None:
+        return {}
     
-
+    result = urlopen(yql_url).read()
+    data = json.loads(result)
+    place_id_1=data['results'][0]['place_id']
     
+    yql_url_1=makeYqlQuery1(req,place_id_1)
+    if yql_url_1 is None:
+        return {}
+    result_1 = urlopen(yql_url_1).read()
+    data_1 = json.loads(result_1)
+    
+    res = makeWebhookResult(data,data_1)
+    return res
 
 
+def makeYqlQuery(req):
+    result = req.get("result")
+    parameters = result.get("parameters")
+    city = parameters.get("geo-city")
+    item = parameters.get("itemssss")
+    cityarr=city.split(" ")
+    itemarr=item.split(" ")
+    
+    if city is None:
+        return None
+    url_1="https://maps.googleapis.com/maps/api/place/textsearch/json?query="
+    url_1=url_1 + cityarr[0]
+    c=len(cityarr)
 
-
-def age(number):
-    if number<18 or number>60 :
-        speech = "Your age Doesn't belong in eligible age group. Sorry, you cant donate blood"
-    if number>=18 and number <=60 :
-        speech = "What Is your Weight"    
+    for i in range(1,c):
+          url_1=url_1+ '+' + cityarr[i]
+    for i in itemarr:
+          url_1 = url_1 + '+' + i
+ 
         
+        
+    url_1=url_1+ '+'+"office"+"&key=" +"AIzaSyBQXZ8seATtUAP9dBU366r4vwsKOjuKPYs"
+    
+    return url_1
+
+def makeYqlQuery1(req,place_id_1):
+    result = req.get("result")
+    parameters = result.get("parameters")
+    city = parameters.get("geo-city")
+    item = parameters.get("itemssss")
+    cityarr=city.split(" ")
+    itemarr=item.split(" ")
+    
+    if city is None:
+        return None
+    '''url_1="https://maps.googleapis.com/maps/api/place/textsearch/json?query="
+    url_1=url_1 + cityarr[0]
+    c=len(cityarr)
+    for i in range(1,c):
+          url_1=url_1+ '+' + cityarr[i]
+    for i in itemarr:
+          url_1 = url_1 + '+' + i
+ 
+        
+        
+    url_1=url_1+ '+'+"office"+"&key=" +"AIzaSyBQXZ8seATtUAP9dBU366r4vwsKOjuKPYs"
+    
+    return url_1'''
+    url_2="https://maps.googleapis.com/maps/api/place/details/json?placeid="+place_id_1+"&key=AIzaSyBQXZ8seATtUAP9dBU366r4vwsKOjuKPYs"
+    return url_2
+
+
+def makeWebhookResult(data,data_1):
+    #results = data.get('results')
+    #if results is None:
+     #   return {}
+
+    formatted_address_1 = data['results'][0]['formatted_address']
+    if formatted_address_1 is None:
+        return {}
+    place_id_1=data['results'][0]['place_id']
+    if place_id_1 is None:
+        return {}
+    phone=data_1['result']['formatted_phone_number']
+    
+    #item = channel.get('item')
+    #location = channel.get('location')
+    #units = channel.get('units')
+    #if (location is None) or (item is None) or (units is None):
+     #   return {}
+
+    #condition = item.get('condition')
+    #if condition is None:
+     #   return {}
+
+    # print(json.dumps(item, indent=4))
+
+    speech = "address of the office is " + formatted_address_1 +"----------------phone no is "+phone
+
     print("Response:")
     print(speech)
 
@@ -84,38 +158,10 @@ def age(number):
         "displayText": speech,
         # "data": data,
         # "contextOut": [],
-        "source": "apiai-weather-webhook-sample"
-    }    
+        "source": "https://github.com/ranjan1110/google-map"
+    }
 
-def weight(number):
-    if number > 50:
-        speech = "Have You Donated Blood in past 3 months?"
-    if number < 50:
-        speech = "Sorry! You must be above 50 KG to donate blood."   
-    return {
-        "speech": speech,
-        "displayText": speech,
-        # "data": data,
-        # "contextOut": [],
-        "source": "apiai-weather-webhook-sample"
-    }   
-    
-"""def months(a): 
-    if a =="yes":
-        speech = "Sorry you can't donate blood"
-    if a =="no":
-        speech = "You Can Donate Blood if you fulfill these requirements:- \n Never has been tested HIV positive. \n Not suffering from ailments like cardiac arrest, hypertension, blood pressure, cancer, epilepsy, kidney ailments and diabetes. \n Hasn't undergone ear/body piercing or tattoo in the past 6 months. \n Haven't undergone immunization in the past 1 month. \n Never treated for rabies or received Hepatitis B vaccine in the past 6 months. \n Hasn't consumed alcohol in the past 24 hours. \n Haven't undergone major dental procedures or general surgeries in the past 1 month. \n Haven't had fits, tuberculosis, asthma and allergic disorders in the past. \n In case of female donors: \n \t  Not pregnant or breastfeeding. \n \t Haven't had miscarriage in the past 6 months. \n Do you fulfill these requirements?"    
-     return {
-        "speech": speech,
-        "displayText": speech,
-        # "data": data,
-        # "contextOut": [],
-        "source": "apiai-weather-webhook-sample"
-    }  
-"""
-    
 
-    
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
 
