@@ -140,6 +140,7 @@ def makeWebhookResult(data,data_1):
      #   return {}
 
     formatted_address_1 = data['results'][0]['formatted_address']
+    name =  data['results'][0]['name']
     if formatted_address_1 is None:
         return {}
     place_id_1=data['results'][0]['place_id']
@@ -159,7 +160,7 @@ def makeWebhookResult(data,data_1):
 
     # print(json.dumps(item, indent=4))
 
-    speech = "Address is:  " + formatted_address_1 +"\n Phone number: "+phone
+    speech = name + " /n Address is:  " + formatted_address_1 +"\n Phone number: "+phone
 
     print("Response:")
     print(speech)
@@ -210,7 +211,7 @@ def months(a):
     if a=="yes" :
         speech = "Sorry! You Can't donate blood. See you next time."
     if a=="no" :
-        speech = "A person can only donate if \n Never has been tested HIV positive. \n Not suffering from ailments like cardiac arrest, hypertension, blood pressure, cancer, epilepsy, kidney ailments and diabetes. \n Hasn't undergone ear/body piercing or tattoo in the past 6 months. \n Haven't undergone immunization in the past 1 month. \n Not treated for rabies or received Hepatitis B vaccine in the past 6 months. \n Hasn't consumed alcohol in the past 24 hours. \n Haven't had fits, tuberculosis, asthma and allergic disorders in the past. \n Haven't undergone major dental procedures or general surgeries in the past 1 month.  \n In case of female donors :\n \t Haven't had miscarriage in the past 6 months. \n \t Not pregnant or breastfeeding.  \n  \n Do you pass these conditions?"
+        speech = "A person can only donate if: \n Never has been tested HIV positive. \n Not suffering from ailments like cardiac arrest, hypertension, blood pressure, cancer, epilepsy, kidney ailments and diabetes. \n Hasn't undergone ear/body piercing or tattoo in the past 6 months. \n Haven't undergone immunization in the past 1 month. \n Not treated for rabies or received Hepatitis B vaccine in the past 6 months. \n Hasn't consumed alcohol in the past 24 hours. \n Haven't had fits, tuberculosis, asthma and allergic disorders in the past. \n Haven't undergone major dental procedures or general surgeries in the past 1 month.  \n In case of female donors :\n \t Haven't had miscarriage in the past 6 months. \n \t Not pregnant or breastfeeding.  \n  \n Do you pass these conditions?"
         
     print("Response:")
     print(speech)
