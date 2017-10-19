@@ -60,13 +60,12 @@ def processRequest(req):
     if req.get("result").get("action") == "yahooWeatherForecast":
         res = makeWebhookResult(data)
         return res
-    if req.get("result").get("action") == "sunset":
-        res1 = makeWebhookResult1(data)
-        return res1
-    if req.get("result").get("action") == "sunrise":
-        res2 = makeWebhookResult2(data)
-        return res2
-
+    if req.get("result").get("action") == "age":
+        number1=req.get("result").get("parameters").get("number")
+        res=age(number1)
+    if req.get("result").get("action") == "weight":
+        number2=req.get("result").get("parameters").get("unit-weight").get("amount")
+        res=weight(number2)
 
 def makeYqlQuery(req):
     result = req.get("result")
@@ -117,33 +116,12 @@ def makeWebhookResult(data):
         "source": "apiai-weather-webhook-sample"
     }
 
-def makeWebhookResult1(data):
-    query = data.get('query')
-    if query is None:
-        return {}
-
-    result = query.get('results')
-    if result is None:
-        return {}
-
-    channel = result.get('channel')
-    if channel is None:
-        return {}
-
-    item = channel.get('item')
-    location = channel.get('location')
-    units = channel.get('units')
-    if (location is None) or (item is None) or (units is None):
-        return {}
-
-    astronomy = channel.get('astronomy')
-    if astronomy is None:
-        return {}
-
-    # print(json.dumps(item, indent=4))
-
-    speech = "Today in " + location.get('city') + " Sun will set at " + astronomy.get('sunset') 
-
+def age(number):
+    if number<18 or number>60 :
+        speech = "Your age Doesn't belong in eligible age group. Sorry, you cant donate blood"
+    if number>=18 and number <=60 :
+        speech = "What Is your Weight"    
+        
     print("Response:")
     print(speech)
 
@@ -153,47 +131,24 @@ def makeWebhookResult1(data):
         # "data": data,
         # "contextOut": [],
         "source": "apiai-weather-webhook-sample"
-    }
+    }    
 
-def makeWebhookResult2(data):
-    query = data.get('query')
-    if query is None:
-        return {}
-
-    result = query.get('results')
-    if result is None:
-        return {}
-
-    channel = result.get('channel')
-    if channel is None:
-        return {}
-
-    item = channel.get('item')
-    location = channel.get('location')
-    units = channel.get('units')
-    if (location is None) or (item is None) or (units is None):
-        return {}
-
-    astronomy = channel.get('astronomy')
-    if astronomy is None:
-        return {}
-
-    # print(json.dumps(item, indent=4))
-
-    speech = "Today in " + location.get('city') + " Sun rose at " + astronomy.get('sunrise') 
-
-    print("Response:")
-    print(speech)
-
+def weight(number):
+    if number > 50:
+        speech = "Have You Donated Blood in past 3 months?"
+    if number < 50:
+        speech = "Sorry! You must be above 50 KG to donate blood."   
     return {
         "speech": speech,
         "displayText": speech,
         # "data": data,
         # "contextOut": [],
         "source": "apiai-weather-webhook-sample"
-    }
-
-
+    }   
+    
+    
+    
+    
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
 
