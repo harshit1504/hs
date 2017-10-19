@@ -50,25 +50,25 @@ def webhook():
 
 
 def processRequest(req):
-    if req.get("result").get("action") != "map":
-        return {}
+    if req.get("result").get("action") == "map":
+        
     #baseurl = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-    yql_url = makeYqlQuery(req)
-    if yql_url is None:
-        return {}
+        yql_url = makeYqlQuery(req)
+        if yql_url is None:
+            return {}
     
-    result = urlopen(yql_url).read()
-    data = json.loads(result)
-    place_id_1=data['results'][0]['place_id']
+        result = urlopen(yql_url).read()
+        data = json.loads(result)
+        place_id_1=data['results'][0]['place_id']
     
-    yql_url_1=makeYqlQuery1(req,place_id_1)
-    if yql_url_1 is None:
-        return {}
-    result_1 = urlopen(yql_url_1).read()
-    data_1 = json.loads(result_1)
+        yql_url_1=makeYqlQuery1(req,place_id_1)
+        if yql_url_1 is None:
+            return {}
+        result_1 = urlopen(yql_url_1).read()
+        data_1 = json.loads(result_1)
     
-    res = makeWebhookResult(data,data_1)
-    return res
+        res = makeWebhookResult(data,data_1)
+        return res
 
 
 def makeYqlQuery(req):
@@ -148,7 +148,7 @@ def makeWebhookResult(data,data_1):
 
     # print(json.dumps(item, indent=4))
 
-    speech = "address of the office is " + formatted_address_1 +"----------------phone no is "+phone
+    speech = "Address is:  " + formatted_address_1 +"\n Phone number: "+phone
 
     print("Response:")
     print(speech)
