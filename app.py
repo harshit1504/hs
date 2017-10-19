@@ -174,7 +174,7 @@ def makeWebhookResult(data,data_1):
 
 def age(num):
     if num<18 or num >60:
-        speech = "You dont fall into required age criteria to donate the blood."
+        speech = "You don't fall into required age criteria to donate blood."
     else :
         speech = "What is Your Weight?"
         
@@ -191,7 +191,7 @@ def age(num):
 
 def weight(num):
     if num<50 :
-        speech = "You are Underweight to donate blood."
+        speech = "You are Underweight to donate blood. See you next time!"
     else :
         speech = "Have You Donated blood in past three Months?"
         
@@ -208,9 +208,9 @@ def weight(num):
 
 def months(a):
     if a=="yes" :
-        speech = "You Can't donate blood."
+        speech = "Sorry! You Can't donate blood. See you next time."
     if a=="no" :
-        speech = "You Can Only Donate if"
+        speech = "A person can only donate if \n Never has been tested HIV positive. \n Not suffering from ailments like cardiac arrest, hypertension, blood pressure, cancer, epilepsy, kidney ailments and diabetes. \n Hasn't undergone ear/body piercing or tattoo in the past 6 months. \n Haven't undergone immunization in the past 1 month. \n Not treated for rabies or received Hepatitis B vaccine in the past 6 months. \n Hasn't consumed alcohol in the past 24 hours. \n Haven't had fits, tuberculosis, asthma and allergic disorders in the past. \n Haven't undergone major dental procedures or general surgeries in the past 1 month.  \n In case of female donors :\n \t Haven't had miscarriage in the past 6 months. \n \t Not pregnant or breastfeeding.  \n  \n If you eligible, type Yes"
         
     print("Response:")
     print(speech)
