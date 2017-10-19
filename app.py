@@ -58,7 +58,11 @@ def processRequest(req):
         number2=req.get("result").get("parameters").get("unit-weight").get("amount")
         res=weight(number2)
         return res
-
+    if req.get("result").get("action") == "3months":
+        boo=req.get("result").get("parameters").get("bool")
+        res=months(boo)
+        return res
+    
 
     
 
@@ -95,8 +99,21 @@ def weight(number):
         "source": "apiai-weather-webhook-sample"
     }   
     
+def months(a): 
+    if a =="yes":
+        speech = "Sorry you can't donate blood"
+    if a =="no":
+        speech = "You Can Donate Blood if you fulfill these requirements:- \n Never has been tested HIV positive. \n Not suffering from ailments like cardiac arrest, hypertension, blood pressure, cancer, epilepsy, kidney ailments and diabetes. \n Hasn't undergone ear/body piercing or tattoo in the past 6 months. \n Haven't undergone immunization in the past 1 month. \n Never treated for rabies or received Hepatitis B vaccine in the past 6 months. \n Hasn't consumed alcohol in the past 24 hours. \n Haven't undergone major dental procedures or general surgeries in the past 1 month. \n Haven't had fits, tuberculosis, asthma and allergic disorders in the past. \n In case of female donors: \n \t  Not pregnant or breastfeeding. \n \t Haven't had miscarriage in the past 6 months. \n Do you fulfill these requirements?"    
+     return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "apiai-weather-webhook-sample"
+    }  
+
     
-    
+
     
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
