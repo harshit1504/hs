@@ -207,9 +207,9 @@ def weight(num):
     }
 
 def months(a):
-    if a>0 :
+    if a=="yes" :
         speech = "You Can't donate blood."
-    else :
+    if a=="no" :
         speech = "You Can Only Donate if"
         
     print("Response:")
